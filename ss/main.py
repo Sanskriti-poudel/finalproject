@@ -1,131 +1,165 @@
 import streamlit as st
 
 # --- Page Config ---
-st.set_page_config(page_title="NEPSE Prediction System", layout="wide")
+st.set_page_config(
+    page_title="NEPSE Prediction System",
+    page_icon="💹",
+    layout="wide"
+)
+
+if "logged_in" not in st.session_state:
+    st.session_state["logged_in"] = False
 
 # --- Custom CSS ---
 st.markdown("""
-    <style>
-        /* Remove default top padding */
-        .block-container {
-            padding-top: 0rem;
-        }
+<style>
+/* Reset padding */
+.block-container {
+    padding-top: 0rem;
+}
 
-        /* Hide Streamlit deploy button and footer */
-        header, footer, .stDeployButton {
-            display: none !important;
-        }
+/* Hide Streamlit footer and hamburger */
+header, footer, .stDeployButton {
+    display: none !important;
+}
 
-        /* Navigation Bar */
-        .navbar {
-            background-color: #ffffff;
-            padding: 15px 40px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+/* Navbar */
+.navbar {
+    background-color: #ffffff;
+    padding: 15px 40px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e0e0e0;
+}
 
-        .navbar .logo {
-            font-size: 24px;
-            color: #2e7d32;
-            font-weight: bold;
-        }
+.navbar .logo {
+    font-size: 24px;
+    color: #2e7d32;
+    font-weight: 700;
+}
 
-        .navbar .menu a {
-            margin-left: 20px;
-            text-decoration: none;
-            color: #444;
-            font-weight: 500;
-        }
+/* navbar buttons for routing */
+.navbar .menu button {
+    margin-left: 25px;
+    font-size: 16px;
+    background: none;
+    color: #444;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.navbar .menu button:hover {
+    color: #2e7d32;
+}
 
-        /* Hero Section (Green Part) */
-        .hero {
-            background: linear-gradient(to right, #43a047, #66bb6a);
-            padding: 60px 20px;
-            text-align: center;
-            color: white;
-            border-radius: 10px;
-        }
+/* Hero Section */
+.hero {
+    background: linear-gradient(90deg, #43a047, #66bb6a);
+    padding: 80px 20px;
+    text-align: center;
+    color: white;
+    border-radius: 12px;
+    margin: 30px auto;
+    max-width: 1000px;
+}
+.hero h1 {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+.hero p {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+.hero button {
+    padding: 12px 28px;
+    font-size: 16px;
+    background-color: white;
+    color: #2e7d32;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.hero button:hover {
+    background-color: #f5f5f5;
+}
 
-        .hero h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-        }
+/* Feature Cards as buttons */
+.stButton > button {
+    width: 100%;
+    height: 300px;
+    background-color: white;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    font-size: 36px;      
+    color: #2e7d32;
+    font-weight: 1000;      
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    line-height: 1.4;
+}
 
-        .hero p {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        .hero button {
-            padding: 10px 22px;
-            font-size: 15px;
-            background-color: white;
-            color: #2e7d32;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        /* Feature Cards Section */
-        .features {
-            display: flex;
-            justify-content: space-around;
-            margin: 40px auto;
-            max-width: 1000px;
-        }
-
-        .feature-card {
-            background-color: white;
-            padding: 25px;
-            width: 30%;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .feature-card h3 {
-            color: #2e7d32;
-            margin-bottom: 10px;
-        }
-
-        .feature-card p {
-            color: #555;
-            font-size: 14px;
-        }
-    </style>
+.stButton > button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+</style>
 """, unsafe_allow_html=True)
 
-# --- HTML Content ---
-st.markdown("""
+# --- Navbar ---
+with st.container():
+    st.markdown("""
     <div class="navbar">
         <div class="logo">💹 NEPSE Prediction System</div>
         <div class="menu">
-            <a href="#">Home</a>
-            <a href="#">Register</a>
-            <a href="#">Login</a>
+            <form>
+                <button name="nav" type="submit" value="home">Home</button>
+                <button name="nav" type="submit" value="register">Register</button>
+                <button name="nav" type="submit" value="login">Login</button>
+            </form>
         </div>
     </div>
+    """, unsafe_allow_html=True)
 
-    <div class="hero">
-        <h1>NEPSE Prediction System</h1>
-        <p>Build your portfolio and explore NEPSE charts with real-time insights.</p>
-        <button>👤 Register Now</button>
-    </div>
+# --- Navbar Routing ---
+if st.query_params.get("nav") == "register":
+    st.switch_page("pages/register.py")
+elif st.query_params.get("nav") == "login":
+    st.switch_page("pages/login.py")
+elif st.query_params.get("nav") == "home":
+    pass  # stays on home
 
-    <div class="features">
-        <div class="feature-card">
-            <h3>📈 Portfolio Building</h3>
-            <p>Create, manage, and track your stock investments in the NEPSE market.</p>
-        </div>
-        <div class="feature-card">
-            <h3>📊 Predict Now </h3>
-            <p> Analyze. Predict. Profit.</p>
-        </div>
-        <div class="feature-card">
-            <h3>📊 Nepse Chart</h3>
-           <p> Visualize historical NEPSE data, trends, and make informed predictions.</p>
-        </div>
-    </div>
+# --- Hero Section ---
+st.markdown("""
+<div class="hero">
+    <h1>Predict & Grow with NEPSE</h1>
+    <p>Build your portfolio and explore NEPSE charts with real-time insights.</p>
+    <button>👤 Register Now</button>
+</div>
 """, unsafe_allow_html=True)
+
+# --- Features as clickable cards ---
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns(3, gap="large")
+
+with col1:
+    if st.button("📈\nPORTFOLIO BUILDING\n\n*Create, manage, and track your investments*"):
+        if st.session_state["logged_in"]:
+            st.switch_page("pages/portfolio.py")
+        else:
+            st.switch_page("pages/login.py")
+
+with col2:
+    if st.button("🔮\nPREDICT NOW\n\n*Analyze, predict, maximize your profit*"):
+        st.switch_page("pages/predict.py")
+
+with col3:
+    if st.button("📊\nNEPSE CHARTS\n\n*Visualize data & trends*"):
+        st.switch_page("pages/nepsechart.py")

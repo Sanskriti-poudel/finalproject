@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 # Page configuration
 st.set_page_config(page_title="Login | NEPSE Prediction System", layout="centered")
 
@@ -17,33 +18,6 @@ st.markdown("""
 
         header, footer {
             visibility: hidden;
-        }
-
-        /* Navbar */
-        .nav {
-            background-color: #2BAE66;
-            color: white;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .nav h2 {
-            font-size: 18px;
-            margin: 0;
-        }
-
-        .nav a {
-            color: white;
-            margin-left: 12px;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .nav a:hover {
-            text-decoration: underline;
         }
 
         /* Login Card */
@@ -108,17 +82,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Navbar ---
-st.markdown("""
-<div class="nav">
-    <h2>NEPSE Prediction System</h2>
-    <div>
-        <a href="/">Home</a>
-        <a href="/Register">Register</a>
-        <a href="/Login">Login</a>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+
 
 # --- Login Form Card ---
 st.markdown('<div class="form-card">', unsafe_allow_html=True)
@@ -135,8 +99,20 @@ with st.form("login_form"):
         if not username or not password:
             st.error("Please enter both fields.")
         else:
-            st.success("✅ Login successful!")
-
+             try:
+                response = requests.post(
+                    "http://127.0.0.1:8000/api/login/",
+                     json={"username": username, "password": password}
+                )
+                if response.status_code == 200:
+                 st.session_state["logged_in"] = True
+                 st.success("✅ Login successful!")
+                 st.switch_page("pages/portfolio.py")
+                 
+                else:
+                 st.error(response.json().get("message", "Invalid credentials"))
+             except Exception as e:
+                st.error(f"API error: {e}")
 # --- Links below form ---
 st.markdown("""
     <div class='form-links'>
